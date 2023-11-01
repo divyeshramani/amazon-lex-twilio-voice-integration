@@ -7,7 +7,7 @@
     <target name="war" >
         <war destfile="${output.dir}/${ant.project.name}.war" webxml="configurations/tomcat-configuration/web.xml">
             <!-- Update this to correct artifact path -->
-            <lib dir="${user.dir}/out/artifacts/amazon_lex_as_conversational_interface_for_twilio_jar"/>
+            <lib dir="${user.dir}/dist" />
         </war>
     </target>
 </project>
