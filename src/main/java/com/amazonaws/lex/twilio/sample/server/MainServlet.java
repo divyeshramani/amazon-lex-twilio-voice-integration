@@ -31,7 +31,7 @@ import java.io.IOException;
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-@WebServlet("/voice")
+@WebServlet("/voice/*")
 public class
 
 MainServlet extends HttpServlet {
@@ -44,7 +44,7 @@ MainServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws
             IOException {
-
+        String serviceProviderCallId = request.getPathInfo();
         String pathForWebsocketsStream = String.format("wss://%s%s/%s",
                 request.getServerName(),
                 request.getContextPath(),

@@ -1,3 +1,4 @@
 dist/
 target/
 war-output/
+WEB-INF/

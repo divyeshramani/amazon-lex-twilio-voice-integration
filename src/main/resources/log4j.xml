@@ -17,6 +17,11 @@
     </category>
 
 
+    <logger name="com.amazonaws.lex" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <logger name="software.amazon.awssdk.services" additivity="false">
         <level value="debug"/>
         <appender-ref ref="STDOUT"/>

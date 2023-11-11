@@ -85,6 +85,19 @@
             <artifactId>lexruntimev2</artifactId>
             <version>2.20.9</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>dynamodb</artifactId>
+            <version>2.21.20</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/ssm -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>ssm</artifactId>
+            <version>2.21.20</version>
+        </dependency>
+
 
     </dependencies>
 
