@@ -10,11 +10,15 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lexruntimev2.LexRuntimeV2AsyncClient;
 import software.amazon.awssdk.services.lexruntimev2.model.ConversationMode;
 import software.amazon.awssdk.services.lexruntimev2.model.StartConversationRequest;
-
+import software.amazon.awssdk.services.lexruntimev2.model.PutSessionRequest;
+import software.amazon.awssdk.services.lexruntimev2.model.SessionState;
+import java.nio.file.Paths;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -142,6 +146,14 @@ public class LexBidirectionalStreamingClient {
                 eventsPublisher,
                 botResponseHandler);
 
+        Map<String,String> sessionAttributes = new HashMap<String,String>();
+        sessionAttributes.put("serviceProviderId", "RandomId");
+        SessionState state = SessionState.builder().sessionAttributes(sessionAttributes).build();
+        
+        PutSessionRequest request = PutSessionRequest.builder().sessionState(state).build();
+        
+        lexRuntimeServiceClient.putSession(request, Paths.get("/dev/null"));
+        
         // wait till conversation finishes. conversation will finish if dialog state reaches "Closed" state - at which point
         // client should gracefully stop the connection,or some exception occurs during the conversation - at which point
         // client should send a disconnection event.

@@ -1,0 +1,102 @@
+package com.amazonaws.lex.twilio.sample.server;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+
+import com.twilio.security.RequestValidator;
+
+@WebFilter("/*")
+public class TwilioRequestValidatorFilter implements Filter {
+
+    private static final Logger LOGGER = Logger.getLogger(TwilioRequestValidatorFilter.class);
+    private RequestValidator requestValidator;
+    private final String currentEnvironment = System.getenv("ENVIRONMENT");
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        requestValidator = new RequestValidator(System.getenv("TWILIO_AUTH_TOKEN"));
+
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        boolean isValidRequest = false;
+        if (request instanceof HttpServletRequest) {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+            // Concatenates the request URL with the query string
+            String pathAndQueryUrl = getRequestUrlAndQueryString(httpRequest);
+            // Extracts only the POST parameters and converts the parameters Map type
+            Map<String, String> postParams = extractPostParams(httpRequest);
+            String signatureHeader = httpRequest.getHeader("X-Twilio-Signature");
+            LOGGER.info(postParams.toString());
+            isValidRequest = requestValidator.validate(
+                    pathAndQueryUrl,
+                    postParams,
+                    signatureHeader);
+        }
+
+        if (isValidRequest || environmentIsTest()) {
+            chain.doFilter(request, response);
+        } else {
+            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        // Nothing to do
+    }
+
+    private boolean environmentIsTest() {
+        return "test".equals(currentEnvironment) || "dev".equals(currentEnvironment);
+    }
+
+    private Map<String, String> extractPostParams(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        Map<String, String[]> requestParams = request.getParameterMap();
+        List<String> queryStringKeys = getQueryStringKeys(queryString);
+
+        return requestParams.entrySet().stream()
+                .filter(e -> !queryStringKeys.contains(e.getKey()))
+                .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()[0]));
+    }
+
+    private List<String> getQueryStringKeys(String queryString) {
+        if (queryString == null || queryString.length() == 0) {
+            return Collections.emptyList();
+        } else {
+            return Arrays.stream(queryString.split("&"))
+                    .map(pair -> pair.split("=")[0])
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private String getRequestUrlAndQueryString(HttpServletRequest request) {
+        String queryString = request.getQueryString();
+        String requestUrl = request.getRequestURL().toString();
+        if (queryString != null && queryString != "") {
+            return requestUrl + "?" + queryString;
+        }
+        return requestUrl;
+    }
+
+}
