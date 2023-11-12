@@ -54,6 +54,13 @@ MainServlet extends HttpServlet {
 
         Say say = new Say.Builder().addText("Welcome to a Twilio Lex sample application.").build();
 
+        String callSid = request.getParameter("CallSid");
+        String calledTo = request.getParameter("Called");
+        // String calledTo = request.getParameter("To"); // 2 fields with same value.
+        String callerId = request.getParameter("From");
+        String callerCity = request.getParameter("CallerCity");
+
+
         Stream stream = new Stream.Builder()
                 .url(pathForWebsocketsStream)
                 .build();

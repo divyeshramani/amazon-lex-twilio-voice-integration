@@ -97,8 +97,8 @@ public class LexBidirectionalStreamingClient {
         }
     }
 
-    public LexBidirectionalStreamingClient() {
-        this.sessionId = UUID.randomUUID().toString();
+    public LexBidirectionalStreamingClient(String sessionId) {
+        this.sessionId = sessionId;
     }
 
 

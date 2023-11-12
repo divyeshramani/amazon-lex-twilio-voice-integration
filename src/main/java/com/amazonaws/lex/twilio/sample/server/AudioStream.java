@@ -86,6 +86,7 @@ public class AudioStream {
         if (message.eventType().equals(MessageType.CONNECTED)) {
             // first message, does not contain anything useful
             // apart from some meta data.
+            LOG.info("got a connected message from twilio:" + message);
         } else if (message.eventType().equals(MessageType.START)) {
             //going to start getting media, this message contains
             // stream id, account id, call id. remember to update them
@@ -96,7 +97,7 @@ public class AudioStream {
             CallIdentifier callIdentifier = startMessage.getCallIdentifier();
             this.twilioCallOperator = new TwilioCallOperator(callIdentifier, session);
             try {
-                this.botConversation = new LexBidirectionalStreamingClient().startConversation(twilioCallOperator);
+                this.botConversation = new LexBidirectionalStreamingClient(callIdentifier.getCallId()).startConversation(twilioCallOperator);
             } catch (URISyntaxException e) {
                 LOG.error(e);
             }
