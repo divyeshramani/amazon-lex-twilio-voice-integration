@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.util.Properties;
-import java.util.UUID;
+// import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -98,7 +98,7 @@ public class LexBidirectionalStreamingClient {
     }
 
     public LexBidirectionalStreamingClient(String sessionId) {
-        this.sessionId = sessionId;
+        this.sessionId = sessionId; // UUID.randomUUID().toString();
     }
 
 
